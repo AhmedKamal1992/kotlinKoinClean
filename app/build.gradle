@@ -10,11 +10,6 @@ android {
         enabled true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
@@ -29,7 +24,7 @@ dependencies {
     implementation project(Modules.repository)
     // FEATURES modules
     implementation project(Modules.featureHome)
-    //implementation project(Modules.featureDetail)
+    implementation project(Modules.featureDetail)
     // NAVIGATION
     implementation project(Modules.navigation)
     // KOIN

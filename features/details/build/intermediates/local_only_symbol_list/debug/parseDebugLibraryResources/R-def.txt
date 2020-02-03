@@ -1,0 +1,20 @@
+R_DEF: Internal format may change without notice
+local
+drawable bg_android
+drawable ic_account_balance_black_24dp
+drawable ic_account_box_black_24dp
+drawable ic_language_black_24dp
+drawable ic_launcher_background
+id fragment_detail_avatar
+id fragment_detail_blog
+id fragment_detail_company
+id fragment_detail_name
+id fragment_detail_root_view
+id imageView
+id imageView3
+id imageView4
+id imageView5
+layout fragment_details
+layout fragment_details_image
+string transition_avatar_dest
+string transition_avatar_orig
