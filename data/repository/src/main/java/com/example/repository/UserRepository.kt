@@ -3,8 +3,10 @@ package com.example.repository
 import androidx.lifecycle.LiveData
 import com.example.model.User
 import com.example.repository.utils.Resource
+import io.reactivex.Observable
+import io.reactivex.Single
 
 interface UserRepository {
-    suspend fun getTopUsersWithCache(forceRefresh: Boolean = false): LiveData<Resource<List<User>>>
-    suspend fun getUserDetailsWithCache(forceRefresh: Boolean = false, login: String): LiveData<Resource<User>>
+    fun getTopUsersWithCache(): Observable<Resource<List<User>>>
+    fun getUserDetailsWithCache(login: String): Observable<Resource<User>>
 }

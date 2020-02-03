@@ -1,67 +1,43 @@
 package com.example.repository
 
-import androidx.lifecycle.LiveData
-import com.example.local.dao.UserDao
+import com.example.local.localDataSource.LocalDataSource
 import com.example.model.User
 import com.example.remote.UserRemoteDataSource
-import com.example.repository.utils.NetworkBoundResource
+import com.example.repository.utils.DataSource
 import com.example.repository.utils.Resource
-import io.philippeboisney.model.ApiResult
-import kotlinx.coroutines.Deferred
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
-class UserRepositoryImpl(private val dataSource: UserRemoteDataSource,
-                         private val dao: UserDao): UserRepository {
+class UserRepositoryImpl(private val remoteDataSource: UserRemoteDataSource, private val localDataSource: LocalDataSource): UserRepository {
 
-    override suspend fun getTopUsersWithCache(forceRefresh: Boolean): LiveData<Resource<List<User>>> {
-        return object: NetworkBoundResource<List<User>, ApiResult<User>>() {
+    override fun getTopUsersWithCache(): Observable<Resource<List<User>>> {
+        val remoteSource = remoteDataSource.fetchTopUsersAsync()
+            .flatMapCompletable { localDataSource.saveUsers(it.items) }
+            .andThen(localDataSource.getAllUsers())
+            .map { Resource.Success(DataSource.NETWORK, it) as Resource<List<User>> }
+            .onErrorReturn { Resource.Error(DataSource.NETWORK, it) }.toObservable().debounce(300, TimeUnit.MILLISECONDS)
 
-            override fun processResponse(response: ApiResult<User>): List<User> {
-                return response.items
-            }
+        val localSource = localDataSource.getAllUsers().
+            map { Resource.Success(DataSource.LOCAL, it) as Resource<List<User>>}.
+            onErrorReturn { Resource.Error(DataSource.LOCAL, it) }.
+            toObservable().debounce(300, TimeUnit.MILLISECONDS)
 
-            override suspend fun saveCallResults(items: List<User>) {
-                dao.save(items)
-            }
+        return Observable.concatArrayEager(localSource, remoteSource)
 
-            override fun shouldFetch(data: List<User>?): Boolean =
-                data == null || data.isEmpty() || forceRefresh
-
-            override suspend fun loadFromDb(): List<User> {
-                return dao.getTopUsers()
-            }
-
-            override fun createCallAsync(): Deferred<ApiResult<User>> =
-                dataSource.fetchTopUsersAsync()
-
-        }.build().asLiveData()
     }
 
-    override suspend fun getUserDetailsWithCache(
-        forceRefresh: Boolean,
-        login: String
-    ): LiveData<Resource<User>> {
+    override fun getUserDetailsWithCache(login: String): Observable<Resource<User>> {
+        val remoteSource = remoteDataSource.fetchUserDetailsAsync(login).
+            flatMapCompletable { localDataSource.saveSingleUser(it) }.
+            andThen(localDataSource.getSingleUser(login)).
+            map { Resource.Success(DataSource.LOCAL, it) as Resource<User> }.
+            onErrorReturn { Resource.Error(DataSource.NETWORK, it) }.toObservable().debounce(300, TimeUnit.MILLISECONDS)
 
-        return object : NetworkBoundResource<User, User>() {
+        val localSource = localDataSource.getSingleUser(login).
+            map { Resource.Success(DataSource.LOCAL, it ) as Resource<User> }.
+            onErrorReturn { Resource.Error(DataSource.LOCAL, it) }.
+            toObservable().debounce(300, TimeUnit.MILLISECONDS)
 
-            override fun processResponse(response: User): User
-                    = response
-
-            override suspend fun saveCallResults(item: User)
-                    = dao.save(item)
-
-            override fun shouldFetch(data: User?): Boolean
-                    = data == null
-                    || data.haveToRefreshFromNetwork()
-                    || data.name.isNullOrEmpty()
-                    || forceRefresh
-
-            override suspend fun loadFromDb(): User
-                    = dao.getUser(login)
-
-            override fun createCallAsync(): Deferred<User>
-                    = dataSource.fetchUserDetailsAsync(login)
-
-        }.build().asLiveData()
+        return Observable.concatArrayEager(localSource, remoteSource)
     }
-
 }

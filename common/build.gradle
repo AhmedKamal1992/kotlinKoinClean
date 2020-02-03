@@ -5,5 +5,7 @@ dependencies {
     implementation AndroidLibraries.appCompat
     implementation AndroidLibraries.navigation
     implementation AndroidLibraries.navigationFrag
+    implementation RxLibraries.rxJava
+    implementation RxLibraries.rxAndroid
     implementation project(Modules.navigation)
 }

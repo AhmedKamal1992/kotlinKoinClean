@@ -29,7 +29,7 @@ dependencies {
     implementation project(Modules.repository)
     // FEATURES modules
     implementation project(Modules.featureHome)
-    //implementation project(Modules.featureDetail)
+    implementation project(Modules.featureDetail)
     // NAVIGATION
     implementation project(Modules.navigation)
     // KOIN

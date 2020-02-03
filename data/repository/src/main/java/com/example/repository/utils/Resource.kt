@@ -1,36 +1,10 @@
 package com.example.repository.utils
 
-class Resource<out T>(val status: Status, val data: T?, val error: Throwable?) {
+sealed class Resource<E>(val source: DataSource) {
 
-    companion object {
-        fun <T> success(data: T?): Resource<T> {
-            return Resource(
-                Status.SUCCESS,
-                data,
-                null
-            )
-        }
-
-        fun <T> error(error: Throwable, data: T?): Resource<T> {
-            return Resource(
-                Status.ERROR,
-                data,
-                error
-            )
-        }
-
-        fun <T> loading(data: T?): Resource<T> {
-            return Resource(
-                Status.LOADING,
-                data,
-                null
-            )
-        }
-    }
-
-    enum class Status {
-        SUCCESS,
-        ERROR,
-        LOADING
-    }
+    class Success<E>(source: DataSource, val result: E): Resource<E>(source)
+    class Error<E>(source: DataSource, val throwable: Throwable): Resource<E>(source)
+    class Loading<E>(source: DataSource): Resource<E>(source)
 }
+
+enum class DataSource { NETWORK, LOCAL }

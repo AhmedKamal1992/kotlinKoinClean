@@ -7,9 +7,8 @@ dependencies {
     implementation project(Modules.local)
     api project(Modules.model)
     // ANDROID
-    implementation KotlinLibraries.kotlinCoroutineCore
-    implementation KotlinLibraries.kotlinCoroutineRxUtil
-    implementation AndroidLibraries.kotlinCoroutineAndroid
+    implementation RxLibraries.rxJava
+    implementation RxLibraries.rxAndroid
     implementation AndroidLibraries.lifecycleExtensions
     // KOIN
     implementation Libraries.koin
@@ -17,7 +16,5 @@ dependencies {
     // TESTS
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockk
-    testImplementation TestLibraries.archCoreTest
-    testImplementation TestLibraries.coroutine
 //    testImplementation project(Modules.commonTest)
 }

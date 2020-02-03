@@ -2,9 +2,9 @@ apply plugin: 'kotlin'
 
 dependencies {
     // KOTLIN
-    implementation KotlinLibraries.kotlin
+    implementation RxLibraries.kotlin
     // NETWORK
-    implementation Libraries.retrofitCoroutineAdapter
+    implementation Libraries.retrofitRxAdapter
     implementation Libraries.gson
     implementation Libraries.retrofit
     implementation Libraries.retrofitGsonConverter

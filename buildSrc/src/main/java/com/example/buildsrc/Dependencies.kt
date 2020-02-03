@@ -37,16 +37,17 @@ object Versions {
     val androidTestRunner = "1.1.2-alpha02"
     val espressoCore = "3.2.0-alpha02"
     val retrofit = "2.5.0"
-    val retrofitCoroutines = "0.9.2"
+    val retrofitRx = "2.7.1"
     val retrofitGson = "2.4.0"
     val gson = "2.8.5"
     val okHttp = "3.12.1"
-    val coroutines = "1.3.3"
+    val rxAndroid = "2.1.1"
+    val rxJava = "2.1.7"
     val koin = "1.0.2"
     val timber = "4.7.1"
     val lifecycle = "2.1.0-alpha04"
-    val nav = "2.2.0"
-    val room = "2.1.0-alpha06"
+    val nav = "2.0.0"
+    val room = "2.2.3"
     val recyclerview = "1.0.0"
     val safeArgs = "2.1.0-alpha01"
     val glide = "4.11.0"
@@ -66,8 +67,9 @@ object Libraries {
     val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
     val roomRunTime = "androidx.room:room-runtime:${Versions.room}"
     val roomKtx = "androidx.room:room-ktx:${Versions.room}"
+    val roomRxJava = "androidx.room:room-rxjava2:${Versions.room}"
     // RETROFIT
-    val retrofitCoroutineAdapter = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:${Versions.retrofitCoroutines}"
+    val retrofitRxAdapter = "com.squareup.retrofit2:adapter-rxjava2:${Versions.retrofitRx}"
     val gson = "com.google.code.gson:gson:${Versions.gson}"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     val retrofitGsonConverter = "com.squareup.retrofit2:converter-gson:${Versions.retrofitGson}"
@@ -76,15 +78,13 @@ object Libraries {
     val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
 }
 
-object KotlinLibraries {
+object RxLibraries {
     val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
-    val kotlinCoroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    val kotlinCoroutineRxUtil = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
+    val rxJava = "io.reactivex.rxjava2:rxjava:${Versions.rxJava}"
+    val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
 }
 
 object AndroidLibraries {
-    // KOTLIN
-    val kotlinCoroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     // ANDROID
     val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
@@ -112,7 +112,7 @@ object TestLibraries {
     val mockkAndroid = "io.mockk:mockk-android:${Versions.mockk}"
     val mockk = "io.mockk:mockk:${Versions.mockk}"
     // COROUTINE
-    val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.rxAndroid}"
     // DATA BINDING
     val databinding = "androidx.databinding:databinding-compiler:${Versions.databinding}"
 }

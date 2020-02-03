@@ -8,5 +8,5 @@ import org.koin.android.viewmodel.ext.koin.viewModel
 
 val homeModule = module {
     factory<TopUsersUseCase> { TopUsersUseCaseImpl(get()) }
-    viewModel { HomeViewModel(get(), get())}
+    viewModel { HomeViewModel(get())}
 }

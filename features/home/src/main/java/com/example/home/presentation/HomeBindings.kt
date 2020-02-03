@@ -18,13 +18,15 @@ object HomeBinding {
     @JvmStatic
     fun <T>showWhenLoading(view: SwipeRefreshLayout, resource: Resource<T>?) {
         Log.d(HomeBinding::class.java.simpleName, "Resource: $resource")
-        if (resource != null) view.isRefreshing = resource.status == Resource.Status.LOADING
+        if(resource is Resource.Loading) { view.isRefreshing } else  { view.isRefreshing = false }
     }
 
     @BindingAdapter("app:items")
     @JvmStatic fun setItems(recyclerView: RecyclerView, resource: Resource<List<User>>?) {
         with(recyclerView.adapter as HomeAdapter) {
-            resource?.data?.let { updateData(it) }
+            if(resource is Resource.Success) {
+                updateData(resource.result)
+            }
         }
     }
 
@@ -36,9 +38,7 @@ object HomeBinding {
     @BindingAdapter("app:showWhenEmptyList")
     @JvmStatic fun showMessageErrorWhenEmptyList(view: View, resource: Resource<List<User>>?) {
         if (resource!=null) {
-            view.visibility = if (resource.status == Resource.Status.ERROR
-                && resource.data != null
-                && resource.data!!.isEmpty()) View.VISIBLE else View.GONE
+            view.visibility = if(resource is Resource.Success) View.GONE else View.VISIBLE
         }
     }
 }
