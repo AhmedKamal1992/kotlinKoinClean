@@ -15,13 +15,14 @@ import com.example.repository.utils.Resource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HomeViewModel (private val useCase: TopUsersUseCase,
-                     private val appDispatchers: AppDispatchers): BaseViewModel()
-{
-    //Getting Data
+class HomeViewModel(
+    private val useCase: TopUsersUseCase,
+    private val appDispatchers: AppDispatchers
+) : BaseViewModel() {
+
+    private var userSource: LiveData<Resource<List<User>>> = MutableLiveData()
     private val _users = MediatorLiveData<Resource<List<User>>>()
     val users: LiveData<Resource<List<User>>> get() = _users
-    private var userSource: LiveData<Resource<List<User>>> = MutableLiveData()
 
     init {
         getUsers(false)
@@ -32,12 +33,14 @@ class HomeViewModel (private val useCase: TopUsersUseCase,
 
     fun userRefreshesItem() = getUsers(true)
 
-    private fun getUsers(forceRefresh: Boolean) = viewModelScope.launch (appDispatchers.main ) {
+    private fun getUsers(forceRefresh: Boolean) = viewModelScope.launch {
         _users.removeSource(userSource) // We make sure there is only one source of livedata (allowing us properly refresh)
-        withContext(appDispatchers.io) { userSource = useCase(forceRefresh = true) }
+
+        userSource = useCase(forceRefresh = forceRefresh)
         _users.addSource(userSource) {
             _users.value = it
-            if (it.status == Resource.Status.ERROR) _snackBarError.value = Event(R.string.an_error_happened)
+            if (it.status == Resource.Status.ERROR) _snackBarError.value =
+                Event(R.string.an_error_happened)
         }
     }
 

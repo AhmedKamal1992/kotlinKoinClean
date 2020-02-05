@@ -14,7 +14,7 @@ fun networkModule(baseUrl: String) = module {
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
     }
 
-    factory { OkHttpClient.Builder().addInterceptor(get()).build() }
+    factory { OkHttpClient.Builder().addInterceptor(get<Interceptor>()).build() }
 
     single {
         Retrofit.Builder()

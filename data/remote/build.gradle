@@ -9,6 +9,8 @@ dependencies {
     implementation Libraries.retrofit
     implementation Libraries.retrofitGsonConverter
     implementation Libraries.httpLoggingInterceptor
+
+    implementation KotlinLibraries.kotlinCoroutineCore
     // DATA MODULE
     implementation project(Modules.model)
     // KOIN

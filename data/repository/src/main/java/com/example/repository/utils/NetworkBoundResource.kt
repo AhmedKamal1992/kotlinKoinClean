@@ -6,7 +6,6 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
-import java.lang.Exception
 import kotlin.coroutines.coroutineContext
 
 abstract class NetworkBoundResource<ResultType, RequestType> {
@@ -15,11 +14,11 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
     private val supervisorJob = SupervisorJob()
 
     suspend fun build(): NetworkBoundResource<ResultType, RequestType> {
-        withContext(Dispatchers.Main) { result.value =
-            Resource.loading(null)
+        withContext(Dispatchers.Main) {
+            result.value = Resource.loading(null)
         }
 
-        CoroutineScope(coroutineContext).launch(supervisorJob) {
+        CoroutineScope(coroutineContext).launch(supervisorJob + Dispatchers.IO) {
             val dbResult = loadFromDb()
             if (shouldFetch(dbResult)) {
                 try {
@@ -43,7 +42,7 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
     private suspend fun fetchFromNetwork(dbResult: ResultType) {
         Log.d(NetworkBoundResource::class.java.name, "Fetch data from network")
         setValue(Resource.loading(dbResult)) // Dispatch latest value quickly (UX purpose)
-        val apiResponse = createCallAsync().await()
+        val apiResponse = createCallAsync()
         Log.e(NetworkBoundResource::class.java.name, "Data fetched from network")
         saveCallResults(processResponse(apiResponse))
         setValue(Resource.success(loadFromDb()))
@@ -68,5 +67,5 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
     protected abstract suspend fun loadFromDb(): ResultType
 
     @MainThread
-    protected abstract fun createCallAsync(): Deferred<RequestType>
+    protected abstract suspend fun createCallAsync(): RequestType
 }

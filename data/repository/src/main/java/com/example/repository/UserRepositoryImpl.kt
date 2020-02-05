@@ -6,14 +6,15 @@ import com.example.model.User
 import com.example.remote.UserRemoteDataSource
 import com.example.repository.utils.NetworkBoundResource
 import com.example.repository.utils.Resource
-import io.philippeboisney.model.ApiResult
-import kotlinx.coroutines.Deferred
+import com.example.model.ApiResult
 
-class UserRepositoryImpl(private val dataSource: UserRemoteDataSource,
-                         private val dao: UserDao): UserRepository {
+class UserRepositoryImpl(
+    private val dataSource: UserRemoteDataSource,
+    private val dao: UserDao
+) : UserRepository {
 
     override suspend fun getTopUsersWithCache(forceRefresh: Boolean): LiveData<Resource<List<User>>> {
-        return object: NetworkBoundResource<List<User>, ApiResult<User>>() {
+        return object : NetworkBoundResource<List<User>, ApiResult<User>>() {
 
             override fun processResponse(response: ApiResult<User>): List<User> {
                 return response.items
@@ -30,7 +31,7 @@ class UserRepositoryImpl(private val dataSource: UserRemoteDataSource,
                 return dao.getTopUsers()
             }
 
-            override fun createCallAsync(): Deferred<ApiResult<User>> =
+            override suspend fun createCallAsync(): ApiResult<User> =
                 dataSource.fetchTopUsersAsync()
 
         }.build().asLiveData()
@@ -43,23 +44,18 @@ class UserRepositoryImpl(private val dataSource: UserRemoteDataSource,
 
         return object : NetworkBoundResource<User, User>() {
 
-            override fun processResponse(response: User): User
-                    = response
+            override fun processResponse(response: User): User = response
 
-            override suspend fun saveCallResults(item: User)
-                    = dao.save(item)
+            override suspend fun saveCallResults(item: User) = dao.save(item)
 
-            override fun shouldFetch(data: User?): Boolean
-                    = data == null
+            override fun shouldFetch(data: User?): Boolean = data == null
                     || data.haveToRefreshFromNetwork()
                     || data.name.isNullOrEmpty()
                     || forceRefresh
 
-            override suspend fun loadFromDb(): User
-                    = dao.getUser(login)
+            override suspend fun loadFromDb(): User = dao.getUser(login)
 
-            override fun createCallAsync(): Deferred<User>
-                    = dataSource.fetchUserDetailsAsync(login)
+            override suspend fun createCallAsync(): User = dataSource.fetchUserDetailsAsync(login)
 
         }.build().asLiveData()
     }

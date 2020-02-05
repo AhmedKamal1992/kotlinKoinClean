@@ -1,10 +1,16 @@
 package com.example.remote
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 class UserRemoteDataSource(private val userService: UserService) {
 
-    fun fetchTopUsersAsync() =
+    suspend fun fetchTopUsersAsync() = withContext(Dispatchers.IO) {
         userService.fetchTopUsersAsync()
+    }
 
-    fun fetchUserDetailsAsync(login: String) =
+    suspend fun fetchUserDetailsAsync(login: String) = withContext(Dispatchers.IO) {
         userService.fetchUserDetailsAsync(login)
+    }
+
 }
